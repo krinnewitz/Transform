@@ -41,8 +41,8 @@ Transform::Transform(Texture *t1, Texture* t2)
 	cv::Mat img2g;	
 	cv::cvtColor(img2, img2g, CV_RGB2GRAY);
 
-	//TODO	
 	//calculate rotation, translation and scaling
+	calcTransform(img1g, img2g);
 }
 
 Transform::Transform(const cv::Mat &t1, const cv::Mat &t2)
@@ -50,9 +50,80 @@ Transform::Transform(const cv::Mat &t1, const cv::Mat &t2)
 	m_img1 = t1;
 	m_img2 = t2;
 
-	//TODO
 	//calculate rotation, translation and scaling
+	calcTransform(t1, t2);
 }
+
+void Transform::calcTransform(const cv::Mat &t1, const cv::Mat &t2)
+{
+	//calculate surf features and choose the 3 best matches
+	cv::SurfFeatureDetector detector(100);
+	cv::SurfDescriptorExtractor extractor;
+
+	std::vector<cv::KeyPoint> keyPoints1;
+	cv::Mat descriptors1;
+	std::vector<cv::KeyPoint> keyPoints2;
+	cv::Mat descriptors2;
+
+	//calculate SURF features for the first image
+	detector.detect( t1, keyPoints1 );
+	extractor.compute( t1, keyPoints1, descriptors1 );
+
+	//calculate SURF features for the second image
+	detector.detect( t2, keyPoints2 );
+	extractor.compute( t2, keyPoints2, descriptors2 );
+
+	//calculate matching
+	cv::FlannBasedMatcher matcher;
+	std::vector< cv::DMatch > matches;
+	matcher.match( descriptors1, descriptors2, matches);
+
+	//search 3 best matches
+	double minDist1 = 100;
+	double minDist2 = 100;
+	double minDist3 = 100;
+	int best1 = -1;
+	int best2 = -1;
+	int best3 = -1;
+
+	for (int i = 0; i < matches.size(); i++)
+	{ 
+		if(matches[i].distance < minDist3)
+		{
+			if(matches[i].distance < minDist2)
+			{
+				if(matches[i].distance < minDist1)
+				{
+					minDist3 = minDist2;
+					best3 = best2;
+					minDist2 = minDist1;
+					best2 = best1;
+					minDist1 = matches[i].distance;
+					best1 = i;
+				}
+				else
+				{
+					minDist3 = minDist2;
+					best3 = best2;
+					minDist2 = matches[i].distance;
+					best2 = i;
+				}
+			}
+			else
+			{
+				minDist3 = matches[i].distance;
+				best3 = i;
+			}
+		}
+	}
+
+	cv::Point2f p1[3] = {/*TODO*/};
+	cv::Point2f p2[3] = {/*TODO*/};
+
+	//calculate rotation, translation and scaling
+	cv::Mat trans = cv::getAffineTransform(p1, p2);
+}
+
 
 cv::Mat Transform::apply()
 {

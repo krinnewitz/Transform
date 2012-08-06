@@ -76,6 +76,16 @@ public:
 	virtual ~Transform();
 
 private:
+	
+	/**
+	 * \brief calculates the rotation, translation and scaling between the two given images
+	 *
+	 * \param	t1	The first image
+	 * \param	t2	The second image
+	 *
+	 */
+	void calcTransform(const cv::Mat &t1, const cv::Mat &t2);
+	
 	///The first image
 	cv::Mat m_img1;
 	
