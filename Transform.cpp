@@ -117,8 +117,8 @@ void Transform::calcTransform(const cv::Mat &t1, const cv::Mat &t2)
 		}
 	}
 
-	cv::Point2f p1[3] = {/*TODO*/};
-	cv::Point2f p2[3] = {/*TODO*/};
+	cv::Point2f p1[3] = {keyPoints1[matches[best1].queryIdx].pt, keyPoints1[matches[best2].queryIdx].pt, keyPoints1[matches[best3].queryIdx].pt};
+	cv::Point2f p2[3] = {keyPoints2[matches[best1].trainIdx].pt, keyPoints2[matches[best2].trainIdx].pt, keyPoints2[matches[best3].trainIdx].pt};
 
 	//calculate rotation, translation and scaling
 	cv::Mat trans = cv::getAffineTransform(p1, p2);
