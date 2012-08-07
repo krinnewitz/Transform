@@ -121,14 +121,19 @@ void Transform::calcTransform(const cv::Mat &t1, const cv::Mat &t2)
 	cv::Point2f p2[3] = {keyPoints2[matches[best1].trainIdx].pt, keyPoints2[matches[best2].trainIdx].pt, keyPoints2[matches[best3].trainIdx].pt};
 
 	//calculate rotation, translation and scaling
-	cv::Mat trans = cv::getAffineTransform(p1, p2);
+	m_trans = cv::getAffineTransform(p1, p2);
 }
 
 
 cv::Mat Transform::apply()
 {
-	//TODO
-	//apply the transformation to the second image/texture
+	cv::Mat result;
+
+	//apply the inverse transformation to the second image/texture	
+	cv::Mat inverse_trans;
+	cv::invertAffineTransform(m_trans, inverse_trans);
+	cv::warpAffine(m_img2, result, inverse_trans, m_img2.size());
+	return result;
 }
 
 Transform::~Transform()

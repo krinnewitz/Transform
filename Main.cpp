@@ -31,6 +31,10 @@ int main (int argc, char** argv)
 		cv::Mat src1 = cv::imread(argv[1], 0);
 		cv::Mat src2 = cv::imread(argv[2], 0);
 
+		lssr::Transform* t = new lssr::Transform(src1, src2);
+		cv::Mat transformed = t->apply();
+		
+
 		cv::startWindowThread();
 		
 		//show the reference image
@@ -39,7 +43,7 @@ int main (int argc, char** argv)
 		
 		//show the transformed second image
 		cv::namedWindow("TransImage", CV_WINDOW_AUTOSIZE);
-		cv::imshow("TransImage", src2);
+		cv::imshow("TransImage", transformed);
 		cv::waitKey();
 
 		cv::destroyAllWindows();

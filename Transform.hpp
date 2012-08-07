@@ -92,6 +92,10 @@ private:
 	///The second image
 	cv::Mat m_img2;
 
+	///The transformation
+	cv::Mat m_trans;
+	
+
 	///The rotation angle
 	float m_alpha;
 
