@@ -79,9 +79,9 @@ void Transform::calcTransform(const cv::Mat &t1, const cv::Mat &t2)
 	matcher.match( descriptors1, descriptors2, matches);
 
 	//search 3 best matches
-	double minDist1 = 100;
-	double minDist2 = 100;
-	double minDist3 = 100;
+	double minDist1 = FLT_MAX;
+	double minDist2 = FLT_MAX;
+	double minDist3 = FLT_MAX;
 	int best1 = -1;
 	int best2 = -1;
 	int best3 = -1;
